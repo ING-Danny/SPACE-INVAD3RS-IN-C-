@@ -2,22 +2,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h> 
+#include <stdint.h>
 #include "conio.h"
 #include "defalien.h"
 #include "alien.h"
 
-
-
-
-typedef struct ALIEN_T {
-    int color;
-    unsigned char posx;
-    unsigned char posy;
-    char *(*aspect)[];
-    unsigned char width;
-    unsigned char height;
-
-} ALIEN_T;
 
 //dusando la creacion dinamicos 
 ALIEN_T *New_alien(){
@@ -83,3 +72,28 @@ void DrawAlien(ALIEN_T *this){
 
 }
 
+
+int get_max_sprite_width() {
+    char **sprites[] = { squid, crab, saucer, shield, octopus, cannon };
+    int count = sizeof(sprites) / sizeof(sprites[0]);
+    int maxw = 0;
+
+    for (int s = 0; s < count; s++) {
+        int w = strlen(sprites[s][0]); 
+        if (w > maxw) maxw = w;
+    }
+    return maxw;
+}
+
+int get_max_sprite_height() {
+    char **sprites[] = { squid, crab, saucer, shield, octopus, cannon };
+    int count = sizeof(sprites) / sizeof(sprites[0]);
+    int maxh = 0;
+
+    for (int s = 0; s < count; s++) {
+        int h = 0;
+        while (sprites[s][h][0] != '\0') h++;
+        if (h > maxh) maxh = h;
+    }
+    return maxh;
+}

@@ -1,28 +1,26 @@
-/* Ruler 1         2         3         4         5         6         7        */
-
-#ifndef	ALIEN_H
+#ifndef ALIEN_H
 #define ALIEN_H
 
-/******************** Declaration of Class with Attributes ********************/
+typedef struct ALIEN_T {
+    int color;
+    unsigned char posx;
+    unsigned char posy;
+    char *(*aspect)[];
+    unsigned char width;
+    unsigned char height;
+} ALIEN_T;
 
-typedef struct ALIEN_T ALIEN_T;
-
-
-
-/************************ Prototypes of Public Methods ************************/
-
-/* ------------------------ Constructor & Destructor ------------------------ */
-
+/* ---- Métodos ---- */
 ALIEN_T * New_alien();
-int       Free_alien( ALIEN_T * );
+int Free_alien(ALIEN_T *);
 
-/* ------------------------ Setting Alien Attributes ------------------------ */
+ALIEN_T * Set_Aspect(ALIEN_T *, char *(*)[]);
+ALIEN_T * Set_alien_color(ALIEN_T *, int);
+ALIEN_T * SetAlienLocation(ALIEN_T *, unsigned char, unsigned char);
 
-ALIEN_T *   Set_Aspect( ALIEN_T *, char *(*)[] );
-ALIEN_T *   Set_alien_color( ALIEN_T *, int );
-ALIEN_T * SetAlienLocation( ALIEN_T *, unsigned char, unsigned char );
+int get_max_sprite_width();
+int get_max_sprite_height();
 
-/* ------------------------ Performing Alien Actions ------------------------ */
+void DrawAlien(ALIEN_T *);
 
-void DrawAlien( ALIEN_T * );
-#endif /* ALIEN_H */
+#endif

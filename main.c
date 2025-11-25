@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 
 void dibujar_aliens();
 
@@ -11,96 +12,99 @@ enum { SQUID_ROW, CRAB_ROW, OCTOPUS_ROW };
 
 int main() {
 
-  clrscr();
-  dibujar_aliens();
+    unsigned char w, h;
+    Get_Console_Size(&w, &h);
+
+    Clear_Screen();
+    dibujar_aliens(w, h);
 
   return 0;
 }
 
 void dibujar_aliens() {
+    int N = 12; // Número de aliens por fila (squids, crabs, octopus)
+    int spriteSpace = 3; // Separación horizontal exacta entre sprites
+    int spriteWidthOnScreen = 8; // ancho real de cada sprite
+    unsigned char W, H;
+    Get_Console_Size(&W, &H);
 
-#define COLS 3
-#define ROWS 3
-#define TOTAL (COLS * ROWS)
+    Clear_Screen();
 
-  ALIEN_T *alien[TOTAL];
+    // ---------------------- S A U C E R ----------------------
+    ALIEN_T *sc = New_alien();
+    Set_Aspect(sc, &saucer);
+    int sauW = sc->width, sauH = sc->height;
+    int sauX = (W - sauW) / 2;
+    int sauY = 1;
 
-  int baseX = 5;
-  int baseY = 6;
-  int sepX = 20;
-  int sepY = 10;
+    Set_alien_color(sc, RED);
+    SetAlienLocation(sc, sauX, sauY);
+    DrawAlien(sc);
+    Free_alien(sc);
 
-  int idx = 0;
+    // ---------------------- CREAR ALIENS ----------------------
+    ALIEN_T *sq = New_alien(); Set_Aspect(sq, &squid);
+    ALIEN_T *cr = New_alien(); Set_Aspect(cr, &crab);
+    ALIEN_T *oc = New_alien(); Set_Aspect(oc, &octopus);
+    ALIEN_T *sh = New_alien(); Set_Aspect(sh, &shield);
+    ALIEN_T *cn = New_alien(); Set_Aspect(cn, &cannon);
 
-  clrscr();
+    int squidH = sq->height, crabH = cr->height, octopusH = oc->height;
+    int shieldH = sh->height, cannonW = cn->width, cannonH = cn->height;
 
-  // squids primera fila
-  for (int c = 0; c < COLS; c++, idx++) {
-    alien[idx] = New_alien();
-    Set_Aspect(alien[idx], &squid);
-    Set_alien_color(alien[idx], GREEN);
-    SetAlienLocation(alien[idx], baseX + c * sepX, baseY);
-  }
+    // ---------------------- CALCULO DEL START X ----------------------
+    int totalWidth = N * spriteWidthOnScreen + (N - 1) * spriteSpace;
+    int startX = (W - totalWidth) / 2; // centrado
 
-  // segunda fila los crabs
-  for (int c = 0; c < COLS; c++, idx++) {
-    alien[idx] = New_alien();
-    Set_Aspect(alien[idx], &crab);
-    Set_alien_color(alien[idx], RED);
-    SetAlienLocation(alien[idx], baseX + c * sepX, baseY + sepY);
-  }
+    // ---------------------- DIBUJAR S Q U I D S ----------------------
+    int squidsY = sauY + sauH + 3;
+    for (int i = 0; i < N; i++) {
+        int x = startX + i * (spriteWidthOnScreen + spriteSpace);
+        SetAlienLocation(sq, x, squidsY);
+        Set_alien_color(sq, GREEN);
+        DrawAlien(sq);
+    }
+    Free_alien(sq);
 
-  //  TERCERA FILA  OCTOPUS
+    // ---------------------- DIBUJAR C R A B S ----------------------
+    int crabsY = squidsY + squidH + 3;
+    for (int i = 0; i < N; i++) {
+        int x = startX + i * (spriteWidthOnScreen + spriteSpace);
+        SetAlienLocation(cr, x, crabsY);
+        Set_alien_color(cr, YELLOW);
+        DrawAlien(cr);
+    }
+    Free_alien(cr);
 
-  for (int c = 0; c < COLS; c++, idx++) {
-    alien[idx] = New_alien();
-    Set_Aspect(alien[idx], &octopus);
-    Set_alien_color(alien[idx], CYAN);
-    SetAlienLocation(alien[idx], baseX + c * sepX, baseY + 2 * sepY);
-  }
+    // ---------------------- DIBUJAR O C T O P U S ----------------------
+    int octopusY = crabsY + crabH + 3;
+    for (int i = 0; i < N; i++) {
+        int x = startX + i * (spriteWidthOnScreen + spriteSpace);
+        SetAlienLocation(oc, x, octopusY);
+        Set_alien_color(oc, CYAN);
+        DrawAlien(oc);
+    }
+    Free_alien(oc);
 
-  /*  DIBUJAR Y LIBERAR LOS 9 ALIENS */
-  for (int i = 0; i < TOTAL; i++)
-    DrawAlien(alien[i]);
-  for (int i = 0; i < TOTAL; i++)
-    Free_alien(alien[i]);
+    // ---------------------- DIBUJAR S H I E L D S ----------------------
+    int shieldsY = octopusY + octopusH + 6;
+    int N_shields = 3;
+    int shieldW=sh->width;
+    totalWidth = N_shields * shieldW + (N_shields - 1) * spriteSpace;
+    startX = (W - totalWidth) / 2;
 
-  /*    SAUCER */
-  ALIEN_T *ufo = New_alien();
-  Set_Aspect(ufo, &saucer);
-  Set_alien_color(ufo, CYAN);
-  SetAlienLocation(ufo, baseX + sepX, baseY - 4); // arriba centrado
-  DrawAlien(ufo);
-  Free_alien(ufo);
+    for (int i = 0; i < N_shields; i++) {
+        int x = startX + i * (shieldW + spriteSpace);
+        SetAlienLocation(sh, x, shieldsY);
+        Set_alien_color(sh, BLUE);
+        DrawAlien(sh);
+    }
 
-  // --------- SHIELDS ----------
-  ALIEN_T *sh[2];
-  int shieldSpacing = 20;
-  int firstShieldX = baseX + ((COLS - 1) * sepX) / 2 - shieldSpacing / 2;
-
-  // Posición Y de los shields: relativa a la última fila de aliens
-  int lastAlienY = baseY + 2 * sepY;
-  int shieldY = lastAlienY + 6; // separación de 6 líneas debajo de los aliens
-
-  for (int i = 0; i < 2; i++) {
-    sh[i] = New_alien();
-    Set_Aspect(sh[i], &shield);
-    Set_alien_color(sh[i], GREEN);
-    SetAlienLocation(sh[i], firstShieldX + i * shieldSpacing, shieldY);
-    DrawAlien(sh[i]);
-  }
-  for (int i = 0; i < 2; i++)
-    Free_alien(sh[i]);
-
-  // --------- PLAYER (CANNON) ----------
-  ALIEN_T *player = New_alien();
-  Set_Aspect(player, &cannon);
-  Set_alien_color(player, WHITE);
-
-  // Centramos respecto a los aliens
-  int playerX = baseX + ((COLS - 1) * sepX) / 2;
-  int playerY = shieldY + 10; // un poco debajo de los shields
-  SetAlienLocation(player, playerX, playerY);
-  DrawAlien(player);
-  Free_alien(player);
+    // ---------------------- DIBUJAR C A N N O N ----------------------
+    int cannonY = shieldsY + shieldH + 7;
+    int cannonX = (W - cannonW) / 2;
+    SetAlienLocation(cn, cannonX, cannonY);
+    Set_alien_color(cn, WHITE);
+    DrawAlien(cn);
+    Free_alien(cn);
 }
