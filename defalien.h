@@ -7,4 +7,5 @@ extern char *saucer[];
 extern char *shield[];
 extern char *octopus[];
 extern char *cannon[]; 
+extern char  *corazon[];
 #endif
