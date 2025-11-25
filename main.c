@@ -2,30 +2,56 @@
 #include "conio.h"
 #include "defalien.h"
 #include "numeros.h"
+#include "screen.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
+#include <locale.h>
 
-void dibujar_aliens();
+void dibujar_aliens(void);
 
 enum { SQUID_ROW, CRAB_ROW, OCTOPUS_ROW };
 
 int main() {
-
     unsigned char w, h;
+
+    setlocale(LC_ALL, "");        // para que los Unicode de las pantallas se vean bien
     Get_Console_Size(&w, &h);
 
-    Clear_Screen();
-    dibujar_aliens(w, h);
+    // 1) PANTALLA DE TÍTULO
+    mostrar_pantalla_titulo();
 
-  return 0;
+    // Esperar Enter
+    getchar();
+
+    // 2) INICIO DEL JUEGO
+    Clear_Screen();
+    dibujar_aliens();    // dibuja aliens, corazones y número de score inicial
+
+    // Aquí iría tu bucle de juego real (movimiento, disparos, etc.)
+    // Por ahora simulamos que el juego termina cuando el usuario pulse Enter.
+    getchar();
+
+    // 3) PANTALLA GAME OVER
+    Clear_Screen();
+    mostrar_game_over();
+
+    printf(COLOR_CYAN "\n   Presiona Enter para salir...\n" COLOR_RESET);
+    getchar();
+
+    return 0;
 }
 
-void dibujar_aliens() {
-    int N = 12; // Número de aliens por fila (squids, crabs, octopus)
-    int spriteSpace = 3; // Separación horizontal exacta entre sprites
-    int spriteWidthOnScreen = 8; // ancho real de cada sprite
+/* ===================================================================== */
+/*                           DIBUJAR ALIENS                              */
+/* ===================================================================== */
+
+void dibujar_aliens(void) {
+    int N = 12;                 // Número de aliens por fila (squids, crabs, octopus)
+    int spriteSpace = 3;        // Separación horizontal exacta entre sprites
+    int spriteWidthOnScreen = 8;// ancho real de cada sprite
     unsigned char W, H;
     Get_Console_Size(&W, &H);
 
@@ -50,8 +76,12 @@ void dibujar_aliens() {
     ALIEN_T *sh = New_alien(); Set_Aspect(sh, &shield);
     ALIEN_T *cn = New_alien(); Set_Aspect(cn, &cannon);
 
-    int squidH = sq->height, crabH = cr->height, octopusH = oc->height;
-    int shieldH = sh->height, cannonW = cn->width, cannonH = cn->height;
+    int squidH   = sq->height;
+    int crabH    = cr->height;
+    int octopusH = oc->height;
+    int shieldH  = sh->height;
+    int cannonW  = cn->width;
+    int cannonH  = cn->height;   // (por si lo usas luego)
 
     // ---------------------- CALCULO DEL START X ----------------------
     int totalWidth = N * spriteWidthOnScreen + (N - 1) * spriteSpace;
@@ -62,7 +92,7 @@ void dibujar_aliens() {
     for (int i = 0; i < N; i++) {
         int x = startX + i * (spriteWidthOnScreen + spriteSpace);
         SetAlienLocation(sq, x, squidsY);
-        Set_alien_color(sq, PURPLE);
+        Set_alien_color(sq, PURPLE);   // colores versión GitHub
         DrawAlien(sq);
     }
     Free_alien(sq);
@@ -90,7 +120,7 @@ void dibujar_aliens() {
     // ---------------------- DIBUJAR S H I E L D S ----------------------
     int shieldsY = octopusY + octopusH + 6;
     int N_shields = 3;
-    int shieldW=sh->width;
+    int shieldW = sh->width;
     totalWidth = N_shields * shieldW + (N_shields - 1) * spriteSpace;
     startX = (W - totalWidth) / 2;
 
@@ -109,15 +139,16 @@ void dibujar_aliens() {
     DrawAlien(cn);
     Free_alien(cn);
 
+    // ---------------------- DIBUJAR V I D A S (CORAZONES) ----------------------
     ALIEN_T *vida = New_alien();
-    Set_Aspect(vida, &corazon);  // usa tu mini corazón definido antes
+    Set_Aspect(vida, &corazon);   // sprite corazon definido en defalien.h
 
-    int numVidas = 3;            // número de vidas
-    int vidaSpace = 1;           // separación horizontal entre vidas
+    int numVidas = 3;             // número de vidas
+    int vidaSpace = 1;            // separación horizontal entre vidas
     int vidaW = vida->width;
     int vidaH = vida->height;
 
-    // Ubicamos la primera vida desde la derecha
+    // Ubicamos el grupo de vidas pegado al lado derecho
     int vidaX = W - (numVidas * vidaW + (numVidas - 1) * vidaSpace);
     int vidaY = sauY; // misma altura que el saucer
 
@@ -129,6 +160,8 @@ void dibujar_aliens() {
 
     Free_alien(vida);
 
+    // ---------------------- DIBUJAR N Ú M E R O INICIAL ----------------------
+    // Ejemplo: score inicial 0 en rojo, en x=5, y=sauY
     ALIEN_T *num_izq = CreateNumber(0, RED, 5, sauY);
     Free_alien(num_izq);
 }
