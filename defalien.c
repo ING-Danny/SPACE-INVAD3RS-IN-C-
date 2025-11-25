@@ -1,4 +1,4 @@
-#include "defalien.h"
+ #include "defalien.h"
  
  char *squid[]={
 "\u2800\u2800\u2800\u2800\u2800\u259F\u2599   ",
@@ -75,5 +75,12 @@ char *cannon[] = {
     "\u2580\u2590\u2590\u2590\u2590\u2590\u2590\u2590\u2580",
     "\u2588\u2588\u2588\u2580\u2580\u2580\u2588\u2588\u2588",
     "\u2800\u2584\u2584\u2584\u2584\u2584\u2584\u2584\u2800",
+    ""
+};
+
+char *corazon[] = {
+    " ▄▄ ",   // parte superior
+    "████",   // parte central
+    " ▀▀ ",   // punta inferior
     ""
 };

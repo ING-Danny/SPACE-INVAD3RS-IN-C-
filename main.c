@@ -1,6 +1,7 @@
 #include "alien.h"
 #include "conio.h"
 #include "defalien.h"
+#include "numeros.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -61,7 +62,7 @@ void dibujar_aliens() {
     for (int i = 0; i < N; i++) {
         int x = startX + i * (spriteWidthOnScreen + spriteSpace);
         SetAlienLocation(sq, x, squidsY);
-        Set_alien_color(sq, GREEN);
+        Set_alien_color(sq, PURPLE);
         DrawAlien(sq);
     }
     Free_alien(sq);
@@ -71,7 +72,7 @@ void dibujar_aliens() {
     for (int i = 0; i < N; i++) {
         int x = startX + i * (spriteWidthOnScreen + spriteSpace);
         SetAlienLocation(cr, x, crabsY);
-        Set_alien_color(cr, YELLOW);
+        Set_alien_color(cr, BLUE);
         DrawAlien(cr);
     }
     Free_alien(cr);
@@ -96,7 +97,7 @@ void dibujar_aliens() {
     for (int i = 0; i < N_shields; i++) {
         int x = startX + i * (shieldW + spriteSpace);
         SetAlienLocation(sh, x, shieldsY);
-        Set_alien_color(sh, BLUE);
+        Set_alien_color(sh, GREEN);
         DrawAlien(sh);
     }
 
@@ -107,4 +108,27 @@ void dibujar_aliens() {
     Set_alien_color(cn, WHITE);
     DrawAlien(cn);
     Free_alien(cn);
+
+    ALIEN_T *vida = New_alien();
+    Set_Aspect(vida, &corazon);  // usa tu mini corazón definido antes
+
+    int numVidas = 3;            // número de vidas
+    int vidaSpace = 1;           // separación horizontal entre vidas
+    int vidaW = vida->width;
+    int vidaH = vida->height;
+
+    // Ubicamos la primera vida desde la derecha
+    int vidaX = W - (numVidas * vidaW + (numVidas - 1) * vidaSpace);
+    int vidaY = sauY; // misma altura que el saucer
+
+    for (int i = 0; i < numVidas; i++) {
+        SetAlienLocation(vida, vidaX + i * (vidaW + vidaSpace), vidaY);
+        Set_alien_color(vida, RED);
+        DrawAlien(vida);
+    }
+
+    Free_alien(vida);
+
+    ALIEN_T *num_izq = CreateNumber(0, RED, 5, sauY);
+    Free_alien(num_izq);
 }
