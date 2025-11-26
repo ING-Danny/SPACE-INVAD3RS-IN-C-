@@ -171,3 +171,15 @@ void Get_Console_Size(unsigned char *x, unsigned char *y)
     *y = w.ws_row;
 #endif
 }
+
+
+void clearElement( const char *element[], unsigned char x, unsigned char y )
+{
+for( int i = 0, j = 0; element[i][0] != '\0'; i++, j++ ) {
+    gotoxy( x, y + j );
+    int width = strlen( element[0] ) / 3;
+    for( int spaces = 0; spaces < width; spaces++ )
+        printf( " " );
+}
+
+} /* clearElement */

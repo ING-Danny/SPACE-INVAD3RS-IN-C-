@@ -8,6 +8,9 @@ typedef struct ALIEN_T {
     char *(*aspect)[];
     unsigned char width;
     unsigned char height;
+    int movible;
+    int dx;
+
 } ALIEN_T;
 
 /* ---- Métodos ---- */

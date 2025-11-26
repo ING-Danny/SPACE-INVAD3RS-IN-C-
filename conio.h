@@ -30,5 +30,6 @@ void textcolor( int );
 void Get_Console_Size(unsigned char *x, unsigned char *y);
 void Set_Console_Size( uint8_t x, uint8_t y );
 void Cursor( int status );
+void clearElement( const char *element[], unsigned char x, unsigned char y );
 
 #endif /* CONIO_H */
